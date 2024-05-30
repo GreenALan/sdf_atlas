@@ -27,6 +27,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
+//#include <glad/glad.h>
+
 
 #include "float2.h"
 #include "args_parser.h"
@@ -37,6 +39,9 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../third_party/stb_image_write.h"
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow* window);
 
 ArgsParser   args;
 SdfGl        sdf_gl;
@@ -206,7 +211,10 @@ int main( int argc, char* argv[] ) {
         exit( 1 );
     }
                            
-    glfwWindowHint( GLFW_VISIBLE, GL_FALSE );
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     GLFWwindow *window = glfwCreateWindow( 1, 1, "sdf_atlas", nullptr, nullptr );
     if ( !window ) {
         std::cerr << "GLFW error creating window" << std::endl;
@@ -214,7 +222,7 @@ int main( int argc, char* argv[] ) {
         exit( 1 );
     }
 
-    glfwSetWindowSize( window, 640, 480 );
+    glfwSetWindowSize( window, 2048, 2048);
     glfwMakeContextCurrent( window );
 
 	GLenum err = glewInit();
@@ -308,11 +316,20 @@ int main( int argc, char* argv[] ) {
     }
 
     // Rendering glyphs
-    
-    glViewport(0, 0, width, height);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    sdf_gl.render_sdf(F2(width, height), gp.fp.vertices, gp.lp.vertices);
+    while (!glfwWindowShouldClose(window))
+    {
+        processInput(window);
+
+
+        glViewport(0, 0, width, height);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        sdf_gl.render_sdf(F2(width, height), gp.fp.vertices, gp.lp.vertices);
+
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
     
 
 
@@ -358,10 +375,25 @@ int main( int argc, char* argv[] ) {
     json_file.close();
     
     glfwTerminate();
-    while(true)
-    {
-
-    }
+  
     
     return 0;
+}
+
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    // make sure the viewport matches the new window dimensions; note that width and 
+    // height will be significantly larger than specified on retina displays.
+    glViewport(0, 0, width, height);
 }
