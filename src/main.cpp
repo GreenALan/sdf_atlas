@@ -308,11 +308,14 @@ int main( int argc, char* argv[] ) {
     }
 
     // Rendering glyphs
+    
+    glViewport(0, 0, width, height);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    sdf_gl.render_sdf(F2(width, height), gp.fp.vertices, gp.lp.vertices);
+    
 
-    glViewport( 0, 0, width, height );
-    glClearColor( 0.0, 0.0, 0.0, 0.0 );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
-    sdf_gl.render_sdf( F2( width, height ), gp.fp.vertices, gp.lp.vertices );
+
 
     glReadPixels( 0, 0, width, height, GL_RED, GL_UNSIGNED_BYTE, picbuf );
 
@@ -355,6 +358,10 @@ int main( int argc, char* argv[] ) {
     json_file.close();
     
     glfwTerminate();
+    while(true)
+    {
+
+    }
     
     return 0;
 }
