@@ -53,6 +53,10 @@ else()
   set(LIBS )
 endif(WIN32)
 
+add_library(GLAD "lib/glad.c")
+set(LIBS ${LIBS} GLAD)
+
+
 include_directories(./src)
 include_directories(${CMAKE_SOURCE_DIR}/includes)
 
