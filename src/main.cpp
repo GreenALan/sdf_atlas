@@ -24,10 +24,10 @@
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
-#include <GL/glew.h>
+#include <glad/glad.h>
+//#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <GL/gl.h>
-//#include <glad/glad.h>
+//#include <GL/gl.h>
 
 
 #include "float2.h"
@@ -215,21 +215,28 @@ int main( int argc, char* argv[] ) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow( 1, 1, "sdf_atlas", nullptr, nullptr );
+    GLFWwindow *window = glfwCreateWindow(2048, 2048, "sdf_atlas", nullptr, nullptr );
     if ( !window ) {
         std::cerr << "GLFW error creating window" << std::endl;
         glfwTerminate();
         exit( 1 );
     }
 
-    glfwSetWindowSize( window, 640, 480);
+    glfwSetWindowSize( window, 2048, 2048);
     glfwMakeContextCurrent( window );
+    // glad: load all OpenGL function pointers
+   // ---------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
 
-	GLenum err = glewInit();
+	/*GLenum err = glewInit();
     if ( err != GLEW_OK ) {
         std::cerr << "GLEW init error: " << glewGetErrorString( err ) << std::endl;
         exit( 1 );
-    }
+    }*/
 
     // Reading command line parameters
 
@@ -289,6 +296,8 @@ int main( int argc, char* argv[] ) {
     uint8_t* picbuf = (uint8_t*) malloc( width * height );
 
     // GL initialization
+    glfwSetWindowSize(window, width, height);
+
     
     sdf_gl.init();    
 
@@ -315,23 +324,23 @@ int main( int argc, char* argv[] ) {
         exit( 1 );
     }
    
-    // sdf_gl.initVertex(gp.fp.vertices, gp.lp.vertices);
 
     // Rendering glyphs
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
+        //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
         glViewport(0, 0, width, height);
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+        sdf_gl.initVertex(gp.fp.vertices, gp.lp.vertices);
 
         sdf_gl.render_sdf(F2(width, height), gp.fp.vertices, gp.lp.vertices);
 
-
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

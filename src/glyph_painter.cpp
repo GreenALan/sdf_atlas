@@ -27,8 +27,14 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <math.h>
 
 #include <iostream>
+#include <algorithm>
+#include <float2.h>
+
+using namespace std;
+
 
 static void fill_triangle( F2 p0, F2 p1, F2 p2, std::vector<SdfVertex>* vertices ) {
     SdfVertex v0, v1, v2;
@@ -111,9 +117,23 @@ static void line_rect( const Parabola &par, F2 vmin, F2 vmax, float line_width, 
     vertices->push_back( v3 );
 }
 
+static F2 min0(const F2& v1, const F2& v2) {
+    Float2 res;
+    res.x = v1.x < v2.x ? v1.x : v2.x;
+    res.y = v1.y < v2.y ? v1.y : v2.y;
+    return res;
+}
+
+F2 max0(const F2& v1, const F2& v2) {
+    Float2 res;
+    res.x = v1.x > v2.x ? v1.x : v2.x;
+    res.y = v1.y > v2.y ? v1.y : v2.y;
+    return res;
+}
+
 void LinePainter::line_to( F2 p1, float line_width ) {
-    F2 vmin = min( prev_pos, p1 );
-    F2 vmax = max( prev_pos, p1 );
+    F2 vmin = min0( prev_pos, p1 );
+    F2 vmax = max0( prev_pos, p1 );
 
     vmin -= F2( line_width );
     vmax += F2( line_width );
@@ -130,13 +150,13 @@ void LinePainter::qbez_to( F2 p1, F2 p2, float line_width ) {
     F2 mid01 = F2( 0.5 ) * ( p0 + p1 );
     F2 mid12 = F2( 0.5 ) * ( p1 + p2 );
 
-    F2 vmin = min( p0, mid01 );
-    vmin = min( vmin, mid12 );
-    vmin = min( vmin, p2 );
+    F2 vmin = min0( p0, mid01 );
+    vmin = min0( vmin, mid12 );
+    vmin = min0( vmin, p2 );
 
-    F2 vmax = max( p0, mid01 );
-    vmax = max( vmax, mid12 );
-    vmax = max( vmax, p2 );
+    F2 vmax = max0( p0, mid01 );
+    vmax = max0( vmax, mid12 );
+    vmax = max0( vmax, p2 );
 
     vmin -= F2( line_width );
     vmax += F2( line_width );

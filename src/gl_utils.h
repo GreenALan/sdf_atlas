@@ -22,7 +22,8 @@
 
 #pragma once
 
-#include <GL/glew.h>
+// #include <GL/glew.h>
+#include <glad/glad.h>
 
 enum ShaderType {
 	VertexShader = GL_VERTEX_SHADER, FragmentShader = GL_FRAGMENT_SHADER

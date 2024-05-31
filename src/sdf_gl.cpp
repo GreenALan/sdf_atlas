@@ -48,27 +48,44 @@ void SdfGl::init() {
     initUniformStruct( line_prog, uline );
 }
 
+SdfVertex fs_quad[6] = {
+      { F2(-1.0, -1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
+      { F2(1.0, -1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
+      { F2(1.0,  1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
+
+      { F2(-1.0, -1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
+      { F2(1.0,  1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
+      { F2(-1.0,  1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f }
+};
+
 void SdfGl::initVertex(const std::vector<SdfVertex>& fill_vertices, const std::vector<SdfVertex>& line_vertices)
 {
-    glGenVertexArrays(1, &line_vao);
-    glGenBuffers(1, &line_vbo);
-
-    glGenVertexArrays(1, &fill_vao);
-    glGenBuffers(1, &fill_vbo);
-
-    glGenVertexArrays(1, &quad_vao);
-    glGenBuffers(1, &quad_vbo);
-
-    long long int sum_memory = 0;
-    for (int i = 0; i < vattribs_count; i++)
+    if (line_vao == 0 && line_vbo == 0)
     {
-        sum_memory += (size_t)vattribs[i].offset;
+        glGenVertexArrays(1, &line_vao);
+        glGenBuffers(1, &line_vbo);
+
     }
+  
+    if (fill_vao == 0 && fill_vbo == 0)
+    {
+        glGenVertexArrays(1, &fill_vao);
+        glGenBuffers(1, &fill_vbo);
+    }
+   
+
+    if (quad_vao == 0 && quad_vbo == 0)
+    {
+        glGenVertexArrays(1, &quad_vao);
+        glGenBuffers(1, &quad_vbo);
+    }
+   
+
 
     // line_vao
     glBindVertexArray(line_vao);
     glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sum_memory, line_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SdfVertex) * line_vertices.size(), line_vertices.data(), GL_STATIC_DRAW);
 
     bindAttribs(vattribs, vattribs_count, (size_t)line_vertices.data());
 
@@ -76,24 +93,20 @@ void SdfGl::initVertex(const std::vector<SdfVertex>& fill_vertices, const std::v
     // fill_vao
     glBindVertexArray(fill_vao);
     glBindBuffer(GL_ARRAY_BUFFER, fill_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sum_memory, fill_vertices.data(), GL_STATIC_DRAW);
+    (GL_ARRAY_BUFFER, sizeof(SdfVertex) * fill_vertices.size(), fill_vertices.data(), GL_STATIC_DRAW);
 
     bindAttribs(vattribs, vattribs_count, (size_t)fill_vertices.data());
 
+    printf("harylv: SdfVertex:%lld", sizeof(SdfVertex));
 
     // quad_vao
-    SdfVertex fs_quad[6] = {
-       { F2(-1.0, -1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
-       { F2(1.0, -1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
-       { F2(1.0,  1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
-
-       { F2(-1.0, -1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
-       { F2(1.0,  1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f },
-       { F2(-1.0,  1.0), F2(0.0f, 1.0f), F2(0.0f), 0.0f, 0.0f }
-    };
+   
     glBindVertexArray(quad_vao);
     glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sum_memory, &fs_quad[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SdfVertex) * 6, &fs_quad[0], GL_STATIC_DRAW);
+    
+    bindAttribs(vattribs, vattribs_count, (size_t)fs_quad);
+
 
 }
 
@@ -101,7 +114,7 @@ void SdfGl::initVertex(const std::vector<SdfVertex>& fill_vertices, const std::v
 void SdfGl::render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices, const std::vector<SdfVertex> &line_vertices ) {
 
     // full screen quad vertices    
-    SdfVertex fs_quad[6] = {
+   /* SdfVertex fs_quad[6] = {
         { F2( -1.0, -1.0 ), F2( 0.0f, 1.0f ), F2( 0.0f ), 0.0f, 0.0f },
         { F2(  1.0, -1.0 ), F2( 0.0f, 1.0f ), F2( 0.0f ), 0.0f, 0.0f },
         { F2(  1.0,  1.0 ), F2( 0.0f, 1.0f ), F2( 0.0f ), 0.0f, 0.0f },
@@ -109,7 +122,7 @@ void SdfGl::render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices
         { F2( -1.0, -1.0 ), F2( 0.0f, 1.0f ), F2( 0.0f ), 0.0f, 0.0f },
         { F2(  1.0,  1.0 ), F2( 0.0f, 1.0f ), F2( 0.0f ), 0.0f, 0.0f },
         { F2( -1.0,  1.0 ), F2( 0.0f, 1.0f ), F2( 0.0f ), 0.0f, 0.0f }
-    };
+    };*/
 
     size_t lcount = line_vertices.size();
     size_t fcount = fill_vertices.size();
@@ -135,9 +148,9 @@ void SdfGl::render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices
 
     if ( line_vertices.size() ) {
     
-        bindAttribs( vattribs, vattribs_count, (size_t) line_vertices.data() );
+        // bindAttribs( vattribs, vattribs_count, (size_t) line_vertices.data() );
         
-        // glBindVertexArray(line_vao);
+        glBindVertexArray(line_vao);
 
         glUseProgram( line_prog );
         uline.transform_matrix.setv( mscreen3 );
@@ -152,9 +165,9 @@ void SdfGl::render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices
 
     if ( fill_vertices.size() ) {
     
-        bindAttribs( vattribs, vattribs_count, (size_t) fill_vertices.data() );
+       // bindAttribs( vattribs, vattribs_count, (size_t) fill_vertices.data() );
     
-        // glBindVertexArray(fill_vao);
+         glBindVertexArray(fill_vao);
 
         glUseProgram( fill_prog );
         ufill.transform_matrix.setv( mscreen3 );
@@ -169,7 +182,8 @@ void SdfGl::render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices
 
         // Drawing full screen quad, inverting colors where stencil == 1
 
-        bindAttribs( vattribs, vattribs_count, (size_t) fs_quad );
+        //bindAttribs( vattribs, vattribs_count, (size_t) fs_quad );
+        glBindVertexArray(quad_vao);
 
         glEnable( GL_BLEND );
         glBlendEquation( GL_FUNC_ADD );

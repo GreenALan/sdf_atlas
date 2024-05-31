@@ -21,14 +21,14 @@ find_package(GLFW3 REQUIRED)
 message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
 find_package(ASSIMP REQUIRED)
 message(STATUS "Found ASSIMP in ${ASSIMP_INCLUDE_DIR}")
-find_package(GLEW REQUIRED)
-message(STATUS "Found GLEW in ${GLEW_INCLUDE_DIR}")
+# find_package(GLEW REQUIRED)
+# message(STATUS "Found GLEW in ${GLEW_INCLUDE_DIR}")
 
 
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 if(WIN32)
-  set(LIBS glfw3 glew32 opengl32 assimp freetype irrKlang)
+  set(LIBS glfw3 opengl32 assimp freetype irrKlang)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 elseif(UNIX AND NOT APPLE)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
