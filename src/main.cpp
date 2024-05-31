@@ -222,7 +222,7 @@ int main( int argc, char* argv[] ) {
         exit( 1 );
     }
 
-    glfwSetWindowSize( window, 2048, 2048);
+    glfwSetWindowSize( window, 640, 480);
     glfwMakeContextCurrent( window );
 
 	GLenum err = glewInit();
@@ -314,6 +314,8 @@ int main( int argc, char* argv[] ) {
         std::cerr << "Error creating framebuffer!" << std::endl;
         exit( 1 );
     }
+   
+    // sdf_gl.initVertex(gp.fp.vertices, gp.lp.vertices);
 
     // Rendering glyphs
     while (!glfwWindowShouldClose(window))
@@ -324,6 +326,9 @@ int main( int argc, char* argv[] ) {
         glViewport(0, 0, width, height);
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+
         sdf_gl.render_sdf(F2(width, height), gp.fp.vertices, gp.lp.vertices);
 
 

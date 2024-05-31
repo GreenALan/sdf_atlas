@@ -173,6 +173,7 @@ void bindAttribs( VertexAttrib *attribs, size_t attrib_count, size_t offset ) {
     for (size_t i = 0; i < attrib_count; ++i) {
         VertexAttrib *va = attribs + i;
         glVertexAttribPointer(va->location, va->size, va->type.gl_type, va->normalize, va->stride, (void*)((size_t)va->offset + offset));
+        printf("harylv: %d %d %d %d %d %d %lld\n", va->location, va->size, va->type.gl_type, va->normalize, va->stride, va->offset, offset);
         glEnableVertexAttribArray(va->location);
     }
 }

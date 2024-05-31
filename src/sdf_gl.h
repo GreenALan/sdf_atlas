@@ -46,9 +46,16 @@ struct SdfGl {
     
     GLuint fill_prog = 0, line_prog = 0;
 
+    GLuint line_vao = 0, fill_vao = 0, quad_vao = 0;
+    GLuint  line_vbo = 0, fill_vbo = 0, quad_vbo = 0;
+
     GlyphUnf ufill, uline;
+
+
 
     void init();
 
     void render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices, const std::vector<SdfVertex> &line_vertices );
+
+    void initVertex(const std::vector<SdfVertex>& fill_vertices, const std::vector<SdfVertex>& line_vertices);
 };
