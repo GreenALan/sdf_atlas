@@ -222,8 +222,11 @@ int main( int argc, char* argv[] ) {
         exit( 1 );
     }
 
-    glfwSetWindowSize( window, 2048, 2048);
+    //glfwSetWindowSize( window, 2048, 2048);
+
     glfwMakeContextCurrent( window );
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
     // glad: load all OpenGL function pointers
    // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -296,9 +299,6 @@ int main( int argc, char* argv[] ) {
     uint8_t* picbuf = (uint8_t*) malloc( width * height );
 
     // GL initialization
-    glfwSetWindowSize(window, width, height);
-
-    
     sdf_gl.init();    
 
     GLuint rbcolor;
@@ -324,22 +324,27 @@ int main( int argc, char* argv[] ) {
         exit( 1 );
     }
    
+    sdf_gl.initVertex(gp.fp.vertices, gp.lp.vertices);
+
+    //int code = glGetError();
+
+    //if (code != GL_NO_ERROR)
+    //{
+    //    std::cout << "GLFW error code: " << code << ", description: " << description << std::endl;
+    //}
 
     // Rendering glyphs
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
-        //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
         glViewport(0, 0, width, height);
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        sdf_gl.initVertex(gp.fp.vertices, gp.lp.vertices);
-
         sdf_gl.render_sdf(F2(width, height), gp.fp.vertices, gp.lp.vertices);
-
         
         glfwSwapBuffers(window);
         glfwPollEvents();

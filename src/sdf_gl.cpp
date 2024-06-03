@@ -87,25 +87,25 @@ void SdfGl::initVertex(const std::vector<SdfVertex>& fill_vertices, const std::v
     glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(SdfVertex) * line_vertices.size(), line_vertices.data(), GL_STATIC_DRAW);
 
-    bindAttribs(vattribs, vattribs_count, (size_t)line_vertices.data());
+    bindAttribs(vattribs, vattribs_count, 0);
 
 
     // fill_vao
     glBindVertexArray(fill_vao);
     glBindBuffer(GL_ARRAY_BUFFER, fill_vbo);
-    (GL_ARRAY_BUFFER, sizeof(SdfVertex) * fill_vertices.size(), fill_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SdfVertex) * fill_vertices.size(), fill_vertices.data(), GL_STATIC_DRAW);
 
-    bindAttribs(vattribs, vattribs_count, (size_t)fill_vertices.data());
+    bindAttribs(vattribs, vattribs_count, 0);
 
-    printf("harylv: SdfVertex:%lld", sizeof(SdfVertex));
+    // printf("harylv: SdfVertex:%lld, %lld\n", sizeof(SdfVertex), sizeof(float));
 
     // quad_vao
    
     glBindVertexArray(quad_vao);
     glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(SdfVertex) * 6, &fs_quad[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SdfVertex) * 6, fs_quad, GL_STATIC_DRAW);
     
-    bindAttribs(vattribs, vattribs_count, (size_t)fs_quad);
+    bindAttribs(vattribs, vattribs_count, 0);
 
 
 }
@@ -140,9 +140,9 @@ void SdfGl::render_sdf( F2 tex_size, const std::vector<SdfVertex> &fill_vertices
         0, 0, 1
     };
 
-    glViewport( 0, 0, tex_size.x, tex_size.y );    
+    //glViewport( 0, 0, tex_size.x, tex_size.y );    
 
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+    //glBindBuffer( GL_ARRAY_BUFFER, 0 );
 
     // Drawing lines with depth test
 
